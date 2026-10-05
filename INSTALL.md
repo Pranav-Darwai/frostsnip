@@ -86,8 +86,11 @@ Optional override:
 
 ```bash
 set FROSTSNIP_DOWNLOAD_URL=https://github.com/Pranav-Darwai/frostsnip/releases/download/v0.1.0/frostSnip_0.1.0_x64-setup.exe
+set FROSTSNIP_SHA256=4a028c02bf2bb8a6f7e06c5a437cd9591d9d026497cb024ccb7e6ed74adb7320
 frostsnip install
 ```
+
+Downloads are HTTPS-only from GitHub hosts and verified with a pinned SHA-256 when available.
 
 Package source in this repo: `packages/npm-frostsnip`
 

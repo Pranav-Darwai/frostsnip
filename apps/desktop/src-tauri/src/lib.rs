@@ -111,10 +111,32 @@ fn capture_fullscreen(cursor_x: Option<i32>, cursor_y: Option<i32>) -> Result<Ca
 /// Write a PNG from a base64 payload to a user-chosen path (Save dialog).
 #[tauri::command]
 fn save_png_bytes(path: String, png_base64: String) -> Result<(), String> {
+    if path.is_empty() || path.contains('\0') {
+        return Err("Invalid save path".into());
+    }
+    let target = PathBuf::from(&path);
+    if !target.is_absolute() {
+        return Err("Save path must be absolute".into());
+    }
+    let ext = target
+        .extension()
+        .and_then(|e| e.to_str())
+        .unwrap_or("")
+        .to_ascii_lowercase();
+    if ext != "png" {
+        return Err("Only .png saves are allowed".into());
+    }
+    // Reject oversized payloads (50 MiB decoded upper bound).
+    let approx_bytes = png_base64.len().saturating_mul(3) / 4;
+    if approx_bytes > 50 * 1024 * 1024 {
+        return Err("PNG payload too large".into());
+    }
     let bytes = STANDARD
         .decode(png_base64.trim())
         .map_err(|e| format!("Invalid PNG data: {e}"))?;
-    let target = PathBuf::from(&path);
+    if bytes.len() < 8 || &bytes[..8] != b"\x89PNG\r\n\x1a\n" {
+        return Err("Payload is not a PNG file".into());
+    }
     if let Some(parent) = target.parent() {
         if !parent.as_os_str().is_empty() {
             std::fs::create_dir_all(parent).map_err(|e| e.to_string())?;
