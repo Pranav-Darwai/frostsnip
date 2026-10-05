@@ -189,12 +189,17 @@ pub fn run() {
             let quit = MenuItem::with_id(app, "quit", "Quit", true, None::<&str>)?;
             let menu = Menu::with_items(app, &[&show, &quit])?;
 
-            let _tray = TrayIconBuilder::new()
+            // One tray only (do not also set app.trayIcon in tauri.conf.json).
+            let tray = TrayIconBuilder::with_id("frostsnip")
                 .icon(app.default_window_icon().unwrap().clone())
                 .menu(&menu)
+                .show_menu_on_left_click(false)
                 .tooltip("frostSnip - Ctrl+Shift+F")
                 .on_menu_event(|app, event| match event.id.as_ref() {
-                    "quit" => app.exit(0),
+                    "quit" => {
+                        // Force a real exit so Windows removes the tray icon.
+                        app.exit(0);
+                    }
                     "capture" => {
                         fire_capture(app);
                     }
@@ -211,16 +216,23 @@ pub fn run() {
                     }
                 })
                 .build(app)?;
+            // Keep the handle alive for the process lifetime.
+            app.manage(tray);
 
             Ok(())
         })
         .invoke_handler(tauri::generate_handler![capture_fullscreen, save_png_bytes])
         .build(tauri::generate_context!())
         .expect("error while building frostSnip")
-        .run(|_app, event| {
+        .run(|app, event| {
             if let RunEvent::ExitRequested { api, code, .. } = &event {
+                // Closing the window should hide to tray, not quit.
+                // Quitting via tray menu uses exit(0) and code is Some(0).
                 if code.is_none() {
                     api.prevent_exit();
+                    if let Some(win) = app.get_webview_window("main") {
+                        let _ = win.hide();
+                    }
                 }
             }
         });

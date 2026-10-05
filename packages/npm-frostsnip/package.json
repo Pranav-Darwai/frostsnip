@@ -4,7 +4,7 @@
   "description": "Install and launch frostSnip (privacy-first snipping tool)",
   "type": "module",
   "bin": {
-    "frostsnip": "./bin/frostsnip.js"
+    "frostsnip": "bin/frostsnip.js"
   },
   "files": [
     "bin",
@@ -27,7 +27,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/Pranav-Darwai/frostsnip"
+    "url": "git+https://github.com/Pranav-Darwai/frostsnip.git"
   },
   "homepage": "https://github.com/Pranav-Darwai/frostsnip#readme",
   "bugs": {
