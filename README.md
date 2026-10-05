@@ -9,28 +9,32 @@
   Capture, find sensitive data on your PC, pixelate it, then share.
 </p>
 
-## Install options
+## Install
 
-| Method | Installs | Command / action |
-|--------|----------|------------------|
-| **Windows setup** | Desktop app | Run `frostSnip_*_x64-setup.exe` |
-| **npm** | Desktop app | `npm i -g frostsnip` then `frostsnip` |
-| **pip** | Desktop app | `pip install frostsnip` then `frostsnip` |
+| Method | Installs | Command / link |
+|--------|----------|----------------|
+| **pip** | Desktop app | `pip install frostsnip` then `python -m frostsnip` |
+| **npm / npx** | Desktop app | `npx frostsnip` or `npm i -g frostsnip` |
+| **Windows setup** | Desktop app | [GitHub Release v0.1.0](https://github.com/Pranav-Darwai/frostsnip/releases/tag/v0.1.0) |
 | **Browser extension** | Chrome/Edge only | Load unpacked `apps/extension/dist` |
 
-Full steps and troubleshooting: **[INSTALL.md](./INSTALL.md)**
-
 ```bash
-# Desktop via npm
-npm install -g frostsnip
-frostsnip
-
-# Desktop via pip
+# Python
 pip install frostsnip
-frostsnip
+python -m frostsnip
+
+# Node
+npx frostsnip
 ```
 
 > npm and pip install the **desktop app**, not the browser extension.
+
+Packages:
+- PyPI: https://pypi.org/project/frostsnip/
+- npm: https://www.npmjs.com/package/frostsnip
+- Releases: https://github.com/Pranav-Darwai/frostsnip/releases
+
+Full steps and troubleshooting: **[INSTALL.md](./INSTALL.md)**
 
 ## Hotkeys (desktop)
 
@@ -46,12 +50,7 @@ pnpm --filter @snapshort/desktop tauri:dev
 pnpm --filter @snapshort/extension build
 ```
 
-## Publish installers to registries
-
-1. Build desktop: `pnpm install:win`
-2. Upload `frostSnip_0.1.0_x64-setup.exe` to GitHub Releases
-3. Publish npm: `cd packages/npm-frostsnip && npm publish --access public`
-4. Publish PyPI: `cd packages/pypi-frostsnip && python -m build && twine upload dist/*`
+Build a Windows installer locally: `pnpm install:win`
 
 ## Brand
 

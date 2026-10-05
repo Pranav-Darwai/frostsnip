@@ -5,27 +5,29 @@ There are **four** ways to get frostSnip. Pick one.
 ```
 A. Windows setup (.exe)     native desktop installer
 B. Browser extension        Chrome / Edge only (web pages)
-C. npm                      installs/launches the desktop app
+C. npm / npx                installs/launches the desktop app
 D. pip (PyPI)               installs/launches the desktop app
 ```
 
 C and D install the **same desktop app** as A. They do not install the browser extension.
 
+Live packages:
+- https://pypi.org/project/frostsnip/
+- https://www.npmjs.com/package/frostsnip
+- https://github.com/Pranav-Darwai/frostsnip/releases
+
 ---
 
 ## A. Desktop app (Windows setup)
 
-### If you already have the setup file
-
-1. Find `frostSnip_0.1.0_x64-setup.exe`
-2. Double-click it
-3. Finish the wizard
-4. Open **frostSnip** from the Start Menu
-5. Use **Ctrl+Shift+F** or **Rectangle** / **Full screen**
+1. Download `frostSnip_0.1.0_x64-setup.exe` from [Releases](https://github.com/Pranav-Darwai/frostsnip/releases/tag/v0.1.0)
+2. Double-click it and finish the wizard
+3. Open **frostSnip** from the Start Menu
+4. Use **Ctrl+Shift+F** or **Rectangle** / **Full screen**
 
 Uninstall: Windows **Settings → Apps → frostSnip**
 
-### Build the setup file
+### Build the setup file (developers)
 
 Needs Node 20+, pnpm, Rust, and VS C++ build tools.
 
@@ -80,18 +82,14 @@ frostsnip path      # show install folder
 frostsnip help
 ```
 
-If GitHub Releases are not published yet, either:
-
-1. Build the desktop app first (`pnpm install:win`), then run `frostsnip` from this repo, or
-2. Point at an installer URL:
+Optional override:
 
 ```bash
-set FROSTSNIP_DOWNLOAD_URL=https://example.com/frostSnip_0.1.0_x64-setup.exe
+set FROSTSNIP_DOWNLOAD_URL=https://github.com/Pranav-Darwai/frostsnip/releases/download/v0.1.0/frostSnip_0.1.0_x64-setup.exe
 frostsnip install
 ```
 
-Package source: `packages/npm-frostsnip`  
-Publish: `cd packages/npm-frostsnip && npm publish --access public`
+Package source in this repo: `packages/npm-frostsnip`
 
 ---
 
@@ -99,8 +97,10 @@ Publish: `cd packages/npm-frostsnip && npm publish --access public`
 
 ```bash
 pip install frostsnip
-frostsnip
+python -m frostsnip
 ```
+
+If `frostsnip` is not found on PATH (common with Windows Store Python), always use `python -m frostsnip`.
 
 Or:
 
@@ -111,15 +111,7 @@ pipx run frostsnip
 Same commands as npm: `install`, `path`, `help`.  
 Same env vars: `FROSTSNIP_REPO`, `FROSTSNIP_DOWNLOAD_URL`.
 
-Package source: `packages/pypi-frostsnip`  
-Publish:
-
-```bash
-cd packages/pypi-frostsnip
-python -m pip install build twine
-python -m build
-python -m twine upload dist/*
-```
+Package source in this repo: `packages/pypi-frostsnip`
 
 ---
 
@@ -130,7 +122,7 @@ python -m twine upload dist/*
 | `npm install frostsnip` then looking in Chrome | npm installs the **desktop** app. For Chrome use section **B**. |
 | `pip install frostsnip` expecting a Python library API | This package is an **installer/launcher**, not a Python OCR API. |
 | Loading the repo root in “Load unpacked” | Load `apps/extension/dist`. |
-| `frostsnip` fails with “No GitHub release” | Build locally (`pnpm install:win`) or set `FROSTSNIP_DOWNLOAD_URL`. |
+| `frostsnip` not recognized after pip | Run `python -m frostsnip` or add Python Scripts to PATH. |
 
 ---
 
