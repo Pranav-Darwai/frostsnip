@@ -10,7 +10,7 @@ async function captureAndOpen() {
   });
 
   if (!dataUrl || dataUrl.length < 64) {
-    throw new Error("Capture failed — empty image");
+    throw new Error("Capture failed - empty image");
   }
 
   await chrome.storage.session.set({

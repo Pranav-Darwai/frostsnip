@@ -1,74 +1,147 @@
-# Install Frostsnip on Windows (offline)
+# How to install frostSnip
 
-Frostsnip installs like a normal Windows app — **not from a website**. You build (or use) a local `.exe` installer, then run it once.
-
-## What you get
-
-After install:
-
-- **Start Menu** → Frostsnip
-- **Desktop** shortcut
-- Tray icon for quick capture
-- Hotkey: `Win+Shift+R` (falls back to `Ctrl+Shift+R`)
-
-Installer files are produced under:
+There are **four** ways to get frostSnip. Pick one.
 
 ```
-apps/desktop/src-tauri/target/release/bundle/nsis/
-apps/desktop/src-tauri/target/release/bundle/msi/
+A. Windows setup (.exe)     native desktop installer
+B. Browser extension        Chrome / Edge only (web pages)
+C. npm                      installs/launches the desktop app
+D. pip (PyPI)               installs/launches the desktop app
 ```
 
-Typical names:
+C and D install the **same desktop app** as A. They do not install the browser extension.
 
-- `Frostsnip_0.1.0_x64-setup.exe` — NSIS wizard (recommended)
-- `Frostsnip_0.1.0_x64_en-US.msi` — MSI for enterprise / silent install
+---
 
-## One-time build prerequisites
+## A. Desktop app (Windows setup)
 
-1. **Node.js 20+** and **pnpm**
-2. **Rust** ([rustup](https://rustup.rs/))
-3. **Visual Studio Build Tools** with “Desktop development with C++”
-4. **WebView2** is usually already on Windows 10/11; the installer can bootstrap it if missing
+### If you already have the setup file
+
+1. Find `frostSnip_0.1.0_x64-setup.exe`
+2. Double-click it
+3. Finish the wizard
+4. Open **frostSnip** from the Start Menu
+5. Use **Ctrl+Shift+F** or **Rectangle** / **Full screen**
+
+Uninstall: Windows **Settings → Apps → frostSnip**
+
+### Build the setup file
+
+Needs Node 20+, pnpm, Rust, and VS C++ build tools.
 
 ```powershell
-# From the repo root
 pnpm install
-```
-
-## Build the Windows installer
-
-```powershell
-pnpm --filter @snapshort/desktop tauri:build
-```
-
-Or from repo root:
-
-```powershell
 pnpm install:win
 ```
 
-When the build finishes, open the `nsis` folder and double-click the `-setup.exe`.
+Output:
 
-## Install on this PC
-
-1. Run `Frostsnip_*_x64-setup.exe`
-2. Choose install folder (default is fine)
-3. Finish → launch Frostsnip from Start Menu
-
-Shortcuts are created by the NSIS installer automatically. Uninstall anytime from **Settings → Apps → Frostsnip**.
-
-## Silent / IT install (MSI)
-
-```powershell
-msiexec /i Frostsnip_0.1.0_x64_en-US.msi /qn
+```
+apps/desktop/src-tauri/target/release/bundle/nsis/frostSnip_0.1.0_x64-setup.exe
 ```
 
-## Share with others (still offline)
+---
 
-Copy the `.exe` or `.msi` to a USB drive / shared folder. Recipients do **not** need Node, Rust, or the internet to install — only WebView2 (already present on most Windows machines).
+## B. Browser extension (Chrome / Edge)
 
-## Dev mode (no installer)
+Not the Start Menu app. Load an unpacked extension.
 
 ```powershell
-pnpm --filter @snapshort/desktop tauri:dev
+pnpm install
+pnpm --filter @snapshort/extension build
 ```
+
+1. Open `chrome://extensions` or `edge://extensions`
+2. Enable **Developer mode**
+3. **Load unpacked** → choose `apps/extension/dist`
+
+Lite variant: build `@snapshort/extension-lite` and load `apps/extension-lite/dist`.
+
+---
+
+## C. npm (desktop app)
+
+```bash
+npm install -g frostsnip
+frostsnip
+```
+
+Or without a global install:
+
+```bash
+npx frostsnip
+```
+
+Useful commands:
+
+```bash
+frostsnip install   # force reinstall
+frostsnip path      # show install folder
+frostsnip help
+```
+
+If GitHub Releases are not published yet, either:
+
+1. Build the desktop app first (`pnpm install:win`), then run `frostsnip` from this repo, or
+2. Point at an installer URL:
+
+```bash
+set FROSTSNIP_DOWNLOAD_URL=https://example.com/frostSnip_0.1.0_x64-setup.exe
+frostsnip install
+```
+
+Package source: `packages/npm-frostsnip`  
+Publish: `cd packages/npm-frostsnip && npm publish --access public`
+
+---
+
+## D. pip / PyPI (desktop app)
+
+```bash
+pip install frostsnip
+frostsnip
+```
+
+Or:
+
+```bash
+pipx run frostsnip
+```
+
+Same commands as npm: `install`, `path`, `help`.  
+Same env vars: `FROSTSNIP_REPO`, `FROSTSNIP_DOWNLOAD_URL`.
+
+Package source: `packages/pypi-frostsnip`  
+Publish:
+
+```bash
+cd packages/pypi-frostsnip
+python -m pip install build twine
+python -m build
+python -m twine upload dist/*
+```
+
+---
+
+## Common mix-ups
+
+| Mistake | Fix |
+|---------|-----|
+| `npm install frostsnip` then looking in Chrome | npm installs the **desktop** app. For Chrome use section **B**. |
+| `pip install frostsnip` expecting a Python library API | This package is an **installer/launcher**, not a Python OCR API. |
+| Loading the repo root in “Load unpacked” | Load `apps/extension/dist`. |
+| `frostsnip` fails with “No GitHub release” | Build locally (`pnpm install:win`) or set `FROSTSNIP_DOWNLOAD_URL`. |
+
+---
+
+## Checklist
+
+**Desktop (A / C / D)**
+
+- [ ] frostSnip opens
+- [ ] `Ctrl+Shift+F` starts a snip
+
+**Extension (B)**
+
+- [ ] Enabled on `chrome://extensions` or `edge://extensions`
+- [ ] Toolbar icon captures the tab

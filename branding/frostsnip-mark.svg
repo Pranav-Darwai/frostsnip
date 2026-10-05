@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024" fill="none">
+  <defs>
+    <linearGradient id="bg" x1="180" y1="80" x2="860" y2="940" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#0E8A82"/>
+      <stop offset="1" stop-color="#0A5F5A"/>
+    </linearGradient>
+    <linearGradient id="frost" x1="280" y1="470" x2="744" y2="560" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FFFFFF" stop-opacity="0.92"/>
+      <stop offset="1" stop-color="#E8F4F2" stop-opacity="0.78"/>
+    </linearGradient>
+  </defs>
+  <!-- App plate -->
+  <rect x="64" y="64" width="896" height="896" rx="208" fill="url(#bg)"/>
+  <!-- Crop corners -->
+  <path d="M288 336V288h48M736 288h48v48M784 688v48h-48M336 736H288v-48" stroke="#FFFFFF" stroke-width="56" stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- Frost bar -->
+  <rect x="300" y="456" width="424" height="112" rx="56" fill="url(#frost)"/>
+</svg>

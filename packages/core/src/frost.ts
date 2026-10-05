@@ -1,19 +1,12 @@
 /**
- * Uniform frosted-glass redaction.
- * Every region uses the same blur kernel, tint, and opacity (sampled from the original image).
+ * Pixelate redaction - mosaic blocks sampled from the original image.
+ * Every region uses the same block size so patches look consistent.
  */
 
 export const FROST_UNIFORM_INTENSITY = 0.85;
 
-const FIXED_RADIUS = 18;
-const FIXED_PASSES = 4;
-/** Fixed milky overlay — not scaled per annotation intensity (keeps patches matching). */
-const FROST_TINT = 0.58;
-const FROST_R = 236;
-const FROST_G = 242;
-const FROST_B = 248;
-/** 1px soft edge only; interior is full-strength frost. */
-const EDGE_PX = 1;
+/** Mosaic cell size in pixels (image space). */
+export const PIXELATE_BLOCK = 12;
 
 export type FrostRegion = { x: number; y: number; width: number; height: number };
 
@@ -21,139 +14,83 @@ function clamp(v: number, lo: number, hi: number) {
   return Math.max(lo, Math.min(hi, v));
 }
 
-/** Horizontal then vertical box blur — same kernel everywhere. */
-function separableBoxBlur(
-  src: Float32Array,
-  w: number,
-  h: number,
-  radius: number,
-): Float32Array {
-  const dest = new Float32Array(src.length);
-  const tmp = new Float32Array(src.length);
-  const r = Math.max(1, Math.round(radius));
-  const diam = r * 2 + 1;
-
-  for (let y = 0; y < h; y++) {
-    for (let x = 0; x < w; x++) {
-      let sr = 0,
-        sg = 0,
-        sb = 0,
-        sa = 0;
-      for (let k = -r; k <= r; k++) {
-        const xx = clamp(x + k, 0, w - 1);
-        const i = (y * w + xx) * 4;
-        sr += src[i]!;
-        sg += src[i + 1]!;
-        sb += src[i + 2]!;
-        sa += src[i + 3]!;
-      }
-      const o = (y * w + x) * 4;
-      tmp[o] = sr / diam;
-      tmp[o + 1] = sg / diam;
-      tmp[o + 2] = sb / diam;
-      tmp[o + 3] = sa / diam;
-    }
-  }
-
-  for (let y = 0; y < h; y++) {
-    for (let x = 0; x < w; x++) {
-      let sr = 0,
-        sg = 0,
-        sb = 0,
-        sa = 0;
-      for (let k = -r; k <= r; k++) {
-        const yy = clamp(y + k, 0, h - 1);
-        const i = (yy * w + x) * 4;
-        sr += tmp[i]!;
-        sg += tmp[i + 1]!;
-        sb += tmp[i + 2]!;
-        sa += tmp[i + 3]!;
-      }
-      const o = (y * w + x) * 4;
-      dest[o] = sr / diam;
-      dest[o + 1] = sg / diam;
-      dest[o + 2] = sb / diam;
-      dest[o + 3] = sa / diam;
-    }
-  }
-
-  return dest;
-}
-
-function frostOneRegionFromOriginal(
+/**
+ * Pixelate one region from the original buffer into `out`.
+ * Uses average color per block so text becomes an unreadable mosaic.
+ */
+function pixelateOneRegionFromOriginal(
   out: Uint8ClampedArray,
   original: Uint8ClampedArray,
   imgW: number,
   imgH: number,
   region: FrostRegion,
+  blockSize: number,
 ): void {
-  const pad = FIXED_RADIUS * FIXED_PASSES + EDGE_PX + 2;
+  const fx0 = clamp(Math.floor(region.x), 0, imgW);
+  const fy0 = clamp(Math.floor(region.y), 0, imgH);
+  const fx1 = clamp(Math.ceil(region.x + region.width), 0, imgW);
+  const fy1 = clamp(Math.ceil(region.y + region.height), 0, imgH);
+  if (fx1 - fx0 < 1 || fy1 - fy0 < 1) return;
 
-  const rx0 = Math.floor(region.x);
-  const ry0 = Math.floor(region.y);
-  const rx1 = Math.ceil(region.x + region.width);
-  const ry1 = Math.ceil(region.y + region.height);
+  const block = Math.max(4, Math.round(blockSize));
 
-  const x0 = clamp(rx0 - pad, 0, imgW);
-  const y0 = clamp(ry0 - pad, 0, imgH);
-  const x1 = clamp(rx1 + pad, 0, imgW);
-  const y1 = clamp(ry1 + pad, 0, imgH);
-  const rw = x1 - x0;
-  const rh = y1 - y0;
-  if (rw <= 2 || rh <= 2) return;
+  // Snap blocks to a global grid so adjacent patches align
+  const startBX = Math.floor(fx0 / block) * block;
+  const startBY = Math.floor(fy0 / block) * block;
 
-  let buf: Float32Array = new Float32Array(rw * rh * 4);
-  for (let y = 0; y < rh; y++) {
-    for (let x = 0; x < rw; x++) {
-      const si = ((y0 + y) * imgW + (x0 + x)) * 4;
-      const di = (y * rw + x) * 4;
-      buf[di] = original[si]!;
-      buf[di + 1] = original[si + 1]!;
-      buf[di + 2] = original[si + 2]!;
-      buf[di + 3] = original[si + 3]!;
-    }
-  }
+  for (let by = startBY; by < fy1; by += block) {
+    for (let bx = startBX; bx < fx1; bx += block) {
+      const x0 = Math.max(bx, fx0);
+      const y0 = Math.max(by, fy0);
+      const x1 = Math.min(bx + block, fx1);
+      const y1 = Math.min(by + block, fy1);
+      if (x1 <= x0 || y1 <= y0) continue;
 
-  for (let p = 0; p < FIXED_PASSES; p++) {
-    const next = separableBoxBlur(buf, rw, rh, FIXED_RADIUS);
-    buf = next;
-  }
+      // Sample average from the full block footprint (clamped to image)
+      const sx0 = clamp(bx, 0, imgW);
+      const sy0 = clamp(by, 0, imgH);
+      const sx1 = clamp(bx + block, 0, imgW);
+      const sy1 = clamp(by + block, 0, imgH);
+      if (sx1 <= sx0 || sy1 <= sy0) continue;
 
-  const fx0 = clamp(rx0, 0, imgW);
-  const fy0 = clamp(ry0, 0, imgH);
-  const fx1 = clamp(rx1, 0, imgW);
-  const fy1 = clamp(ry1, 0, imgH);
+      let sr = 0;
+      let sg = 0;
+      let sb = 0;
+      let sa = 0;
+      let n = 0;
+      for (let y = sy0; y < sy1; y++) {
+        for (let x = sx0; x < sx1; x++) {
+          const i = (y * imgW + x) * 4;
+          sr += original[i]!;
+          sg += original[i + 1]!;
+          sb += original[i + 2]!;
+          sa += original[i + 3]!;
+          n++;
+        }
+      }
+      if (n === 0) continue;
 
-  for (let y = fy0; y < fy1; y++) {
-    for (let x = fx0; x < fx1; x++) {
-      const lx = x - x0;
-      const ly = y - y0;
-      const bi = (ly * rw + lx) * 4;
-      const di = (y * imgW + x) * 4;
+      const r = Math.round(sr / n);
+      const g = Math.round(sg / n);
+      const b = Math.round(sb / n);
+      const a = Math.round(sa / n);
 
-      const distEdge = Math.min(x - fx0, fx1 - 1 - x, y - fy0, fy1 - 1 - y);
-      const edge =
-        EDGE_PX <= 0 ? 1 : clamp(distEdge / EDGE_PX, 0, 1);
-      if (edge <= 0) continue;
-
-      const br = buf[bi]!;
-      const bg = buf[bi + 1]!;
-      const bb = buf[bi + 2]!;
-
-      const frostedR = br * (1 - FROST_TINT) + FROST_R * FROST_TINT;
-      const frostedG = bg * (1 - FROST_TINT) + FROST_G * FROST_TINT;
-      const frostedB = bb * (1 - FROST_TINT) + FROST_B * FROST_TINT;
-
-      out[di] = out[di]! * (1 - edge) + frostedR * edge;
-      out[di + 1] = out[di + 1]! * (1 - edge) + frostedG * edge;
-      out[di + 2] = out[di + 2]! * (1 - edge) + frostedB * edge;
+      for (let y = y0; y < y1; y++) {
+        for (let x = x0; x < x1; x++) {
+          const di = (y * imgW + x) * 4;
+          out[di] = r;
+          out[di + 1] = g;
+          out[di + 2] = b;
+          out[di + 3] = a;
+        }
+      }
     }
   }
 }
 
 /**
- * Apply frost to many regions with identical strength.
- * Always blurs from the original pixels (not prior frosts) so every patch matches.
+ * Apply pixelate frost to many regions with identical block size.
+ * Always samples from the original pixels so overlapping patches stay consistent.
  */
 export function applyFrostsToImageData(
   imageData: ImageData,
@@ -165,7 +102,14 @@ export function applyFrostsToImageData(
   const { width, height } = imageData;
   for (const region of regions) {
     if (region.width <= 0 || region.height <= 0) continue;
-    frostOneRegionFromOriginal(imageData.data, original, width, height, region);
+    pixelateOneRegionFromOriginal(
+      imageData.data,
+      original,
+      width,
+      height,
+      region,
+      PIXELATE_BLOCK,
+    );
   }
 }
 

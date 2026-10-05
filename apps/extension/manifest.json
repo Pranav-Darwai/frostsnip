@@ -1,10 +1,10 @@
 {
   "manifest_version": 3,
-  "name": "Frostsnip",
-  "description": "Clean high-quality snips with frosted PII redaction — like Snipping Tool, privacy-first.",
+  "name": "frostSnip",
+  "description": "Clean high-quality snips with frosted PII redaction, like Snipping Tool, privacy-first.",
   "version": "0.1.0",
   "action": {
-    "default_title": "Frostsnip — new snip",
+    "default_title": "frostSnip: new snip",
     "default_popup": "popup.html",
     "default_icon": {
       "16": "icon16.png",
@@ -29,7 +29,7 @@
         "default": "Ctrl+Shift+R",
         "mac": "Command+Shift+R"
       },
-      "description": "Capture visible tab with Frostsnip (lossless PNG)"
+      "description": "Capture visible tab with frostSnip (lossless PNG)"
     }
   }
 }

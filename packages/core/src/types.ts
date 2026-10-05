@@ -155,7 +155,7 @@ export interface FrostAnnotation extends BaseAnnotation {
   y: number;
   width: number;
   height: number;
-  /** Soft frost intensity 0–1 */
+  /** Soft frost intensity 0-1 */
   intensity: number;
   /** Optional link back to a PII hit */
   piiId?: string;

@@ -9,7 +9,7 @@ export interface PatternDef {
    * - labeled_tail60: keep label visible; blur last 60% of value only
    */
   mask?: "partial" | "tail60" | "labeled_tail60";
-  /** For labeled_tail60 — matches the label prefix including separators */
+  /** For labeled_tail60 - matches the label prefix including separators */
   labelRe?: RegExp;
   keepStart?: number;
   keepEnd?: number;
@@ -46,7 +46,7 @@ function aadhaarOk(raw: string): boolean {
 export const CREDIT_CARD_RE =
   /\b(?:\d{4}[ -]?){3}\d{4}\b|\b(?:\d[ -]*?){13,19}\b/g;
 
-/** Labeled card line — works even when OCR is imperfect / Luhn fails */
+/** Labeled card line - works even when OCR is imperfect / Luhn fails */
 export const LABELED_CARD_RE =
   /\b(?:card|cc|credit\s*card|debit\s*card)[\s:.#-]*\s*(?:\d{4}[\s-]?){3}\d{4}\b|\b(?:card|cc|credit\s*card|debit\s*card)[\s:.#-]*\s*(?:\d[ -]*?){12,19}\d\b/gi;
 
@@ -166,7 +166,7 @@ export const EXTRA_PATTERNS: PatternDef[] = [
   },
   {
     kind: "labeled_name",
-    // Value only after label — still matched as full line for bbox, mask skips label
+    // Value only after label - still matched as full line for bbox, mask skips label
     re: /\b(?:full\s*name|customer\s*name|patient\s*name|account\s*holder|beneficiary|payee|bill\s*to|sold\s*to|ship\s*to|name)[\s:.-]+[A-Z][a-zA-Z.'-]+(?:[ \t]+[A-Z][a-zA-Z.'-]+){0,4}\b/gi,
     mask: "labeled_tail60",
     labelRe:
@@ -190,7 +190,7 @@ export const EXTRA_PATTERNS: PatternDef[] = [
     },
   },
 
-  // ——— UPI / bank rails (invoices, passbooks, payment slips) ———
+  // - - - UPI / bank rails (invoices, passbooks, payment slips) - -  - 
   {
     kind: "upi_id",
     re: /\b[a-zA-Z0-9._-]{2,256}@(?:oksbi|okhdfcbank|okicici|okaxis|ybl|ibl|axl|paytm|apl|upi|waaxis|wapaytm|nsdl|pthdfc|pz|icici|sbi|axisbank|yesbankltd|kotak|barb|cnrb|mahb)\b/gi,
@@ -227,7 +227,7 @@ export const EXTRA_PATTERNS: PatternDef[] = [
     labelRe: /^(?:sort\s*code)[\s:.-]*/i,
   },
 
-  // ——— Passbook / mutual fund / demat ———
+  // - - - Passbook / mutual fund / demat - -  - 
   {
     kind: "customer_id",
     re: /\b(?:customer\s*(?:id|no|number|#)|cust(?:omer)?\s*id|client\s*(?:id|code)|customer\s*code)[\s:.-]*[A-Z0-9-]{4,20}\b/gi,
@@ -299,7 +299,7 @@ export const EXTRA_PATTERNS: PatternDef[] = [
       /^(?:amount(?:\s*due)?|total(?:\s*due)?|net\s*(?:pay|amount)|grand\s*total|invoice\s*total|payable|salary|wage)[\s:.-]*/i,
   },
 
-  // ——— Invoices / tax / insurance / HR / medical ———
+  // - - - Invoices / tax / insurance / HR / medical - -  - 
   {
     kind: "invoice_id",
     re: /\b(?:invoice(?:\s*(?:no|number|#|id))?|inv(?:oice)?\s*(?:no|number|#)|bill\s*(?:no|number|#)|po\s*(?:no|number|#)|purchase\s*order|receipt\s*(?:no|number|#))[\s:.-]*[A-Z0-9\/-]{4,28}\b/gi,

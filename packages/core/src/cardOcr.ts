@@ -61,7 +61,7 @@ function cardHitFromBoxes(text: string, boxes: BBox[], labeled: boolean): PiiHit
 
   const bbox = unionBBoxes(boxes);
   const plan = planTailMask(digits.length === text.replace(/\D/g, "").length ? text : digits);
-  // Tight frost over the last 60% of the digit strip — pad scales with glyph height
+  // Tight frost over the last 60% of the digit strip - pad scales with glyph height
   const blur = expandBlurRegion(tailOfBBox(bbox, 0.6));
 
   return {
@@ -75,7 +75,7 @@ function cardHitFromBoxes(text: string, boxes: BBox[], labeled: boolean): PiiHit
 }
 
 /**
- * Geometry-aware card finder — survives OCR splitting "4111 1111 1111 1111"
+ * Geometry-aware card finder - survives OCR splitting "4111 1111 1111 1111"
  * into separate words (common failure mode for text-only detectors).
  */
 export function detectCardsFromOcrWords(words: OcrWord[]): PiiHit[] {
@@ -83,7 +83,7 @@ export function detectCardsFromOcrWords(words: OcrWord[]): PiiHit[] {
   const lines = groupWordsByLine(words);
 
   const scanLine = (line: OcrWord[], hasCardLabel: boolean, labelIdx: number) => {
-    // Single token with 13–19 digits
+    // Single token with 13-19 digits
     for (const w of line) {
       const d = digitRuns(w.text);
       if (d.length >= 13 && d.length <= 19) {
@@ -190,7 +190,7 @@ export function detectCardsFromOcrWords(words: OcrWord[]): PiiHit[] {
     }
   }
 
-  // Dedupe overlapping card hits — keep longest digit run
+  // Dedupe overlapping card hits - keep longest digit run
   hits.sort((a, b) => normalizeDigits(b.text).length - normalizeDigits(a.text).length);
   const out: PiiHit[] = [];
   for (const h of hits) {

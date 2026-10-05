@@ -1,10 +1,10 @@
 {
   "manifest_version": 3,
-  "name": "Frostsnip Lite",
+  "name": "frostSnip Lite",
   "description": "Lightning snip + auto PII frost. Lossless PNG, local-only OCR.",
   "version": "0.1.0",
   "action": {
-    "default_title": "Frostsnip Lite",
+    "default_title": "frostSnip Lite",
     "default_popup": "popup.html",
     "default_icon": {
       "16": "icon16.png",
@@ -29,7 +29,7 @@
         "default": "Ctrl+Shift+R",
         "mac": "Command+Shift+R"
       },
-      "description": "Capture visible tab with Frostsnip Lite"
+      "description": "Capture visible tab with frostSnip Lite"
     }
   }
 }

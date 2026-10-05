@@ -20,3 +20,13 @@ apps/desktop/dist
 .env.*
 !.env.example
 Thumbs.db
+.cursor/
+.claude/
+.agent/
+AGENTS.md
+CLAUDE.md
+*.canvas.tsx
+packages/pypi-frostsnip/dist/
+packages/pypi-frostsnip/*.egg-info/
+__pycache__/
+*.pyc

@@ -9,18 +9,19 @@ const TOOLS: Array<{ id: AnnotationTool; label: string; tip: string }> = [
   { id: "arrow", label: "Arrow", tip: "A" },
   { id: "pen", label: "Pen", tip: "P" },
   { id: "rect", label: "Rect", tip: "R" },
-  { id: "underline", label: "Underline", tip: "U" },
+  { id: "underline", label: "Line", tip: "U" },
   { id: "text", label: "Text", tip: "T" },
-  { id: "frost", label: "Frost", tip: "B" },
-  { id: "locate", label: "Locate PII", tip: "L" },
+  { id: "frost", label: "Pixelate", tip: "B" },
 ];
 
 export interface EditorToolbarProps {
   onClose?: () => void;
   mode?: "full" | "lite";
+  /** Desktop Save dialog - when set, used instead of browser download */
+  onSaveFile?: (dataUrl: string, filename: string) => Promise<void>;
 }
 
-export function EditorToolbar({ onClose, mode = "full" }: EditorToolbarProps) {
+export function EditorToolbar({ onClose, mode = "full", onSaveFile }: EditorToolbarProps) {
   const tool = useEditorStore((s) => s.tool);
   const color = useEditorStore((s) => s.color);
   const strokeWidth = useEditorStore((s) => s.strokeWidth);
@@ -66,10 +67,20 @@ export function EditorToolbar({ onClose, mode = "full" }: EditorToolbarProps) {
   }, [exportImage]);
 
   const onSave = useCallback(async () => {
-    const url = await exportImage();
-    if (!url) return;
-    downloadPng(url, `frostsnip-${Date.now()}.png`);
-  }, [exportImage]);
+    try {
+      const url = await exportImage();
+      if (!url) return;
+      const filename = `frostSnip-${Date.now()}.png`;
+      if (onSaveFile) {
+        await onSaveFile(url, filename);
+        return;
+      }
+      downloadPng(url, filename);
+    } catch (err) {
+      console.error("[frostsnip] save failed", err);
+      window.alert(`Could not save image.\n\n${err instanceof Error ? err.message : String(err)}`);
+    }
+  }, [exportImage, onSaveFile]);
 
   const runLocate = useCallback(async () => {
     if (!imageDataUrl) return;
@@ -101,7 +112,6 @@ export function EditorToolbar({ onClose, mode = "full" }: EditorToolbarProps) {
       const mod = e.metaKey || e.ctrlKey;
       const k = e.key.toLowerCase();
 
-      // Modifiers: undo / redo / copy / save / select-all clear
       if (mod) {
         if (k === "z" && !e.shiftKey && !e.altKey) {
           e.preventDefault();
@@ -128,11 +138,9 @@ export function EditorToolbar({ onClose, mode = "full" }: EditorToolbarProps) {
           return;
         }
         if (k === "a" && mode === "full") {
-          // avoid browser select-all fighting the canvas
           e.preventDefault();
           return;
         }
-        // Don't fall through to single-key tool shortcuts while holding Ctrl/Cmd
         return;
       }
 
@@ -173,34 +181,39 @@ export function EditorToolbar({ onClose, mode = "full" }: EditorToolbarProps) {
     return () => window.removeEventListener("keydown", onKey, true);
   }, [setTool, undo, redo, removeSelected, mode, onCopy, onSave, onClose, runLocate]);
 
-  const tools = mode === "lite" ? TOOLS.filter((t) => t.id === "select" || t.id === "frost" || t.id === "locate") : TOOLS;
+  const tools =
+    mode === "lite"
+      ? TOOLS.filter((t) => t.id === "select" || t.id === "frost")
+      : TOOLS;
 
   return (
-    <div className="ss-toolbar" role="toolbar">
+    <header className="ss-toolbar" role="toolbar">
       <div className="ss-brand">
-        <span className="ss-brand-mark">F</span>
-        <span className="ss-brand-name">Frostsnip{mode === "lite" ? " Lite" : ""}</span>
+        <span className="ss-brand-mark" aria-hidden>
+          f
+        </span>
+        <span className="ss-brand-name">
+          frost<span>Snip</span>
+          {mode === "lite" ? " Lite" : ""}
+        </span>
       </div>
 
-      <div className="ss-tool-group">
+      <nav className="ss-tool-group" aria-label="Tools">
         {tools.map((t) => (
           <button
             key={t.id}
             type="button"
             className={`ss-tool${tool === t.id ? " is-active" : ""}`}
             title={`${t.label} (${t.tip})`}
-            onClick={() => {
-              if (t.id === "locate") void runLocate();
-              else setTool(t.id);
-            }}
+            onClick={() => setTool(t.id)}
           >
             {t.label}
           </button>
         ))}
-      </div>
+      </nav>
 
       {mode === "full" && (
-        <div className="ss-tool-group ss-colors">
+        <div className="ss-tool-group ss-colors" aria-label="Style">
           {ANNOTATION_COLORS.map((c) => (
             <button
               key={c}
@@ -227,38 +240,45 @@ export function EditorToolbar({ onClose, mode = "full" }: EditorToolbarProps) {
       <div className="ss-tool-group ss-actions">
         {mode === "full" && (
           <>
-            <button type="button" className="ss-tool" title="Ctrl/Cmd+Z" onClick={undo}>
+            <button type="button" className="ss-tool ss-ghost" title="Ctrl+Z" onClick={undo}>
               Undo
             </button>
-            <button type="button" className="ss-tool" title="Ctrl/Cmd+Shift+Z" onClick={redo}>
+            <button type="button" className="ss-tool ss-ghost" title="Ctrl+Shift+Z" onClick={redo}>
               Redo
             </button>
+            <span className="ss-divider" aria-hidden />
           </>
         )}
-        <button type="button" className="ss-tool ss-accent" onClick={() => void runLocate()} disabled={scanning}>
+        <button
+          type="button"
+          className={`ss-tool ss-warn${tool === "locate" ? " is-active" : ""}`}
+          onClick={() => void runLocate()}
+          disabled={scanning}
+        >
           {scanning ? "Scanning…" : "Locate PII"}
         </button>
         <button
           type="button"
-          className="ss-tool ss-accent"
+          className="ss-tool ss-warn-soft"
           title="Blur every detected PII region"
           disabled={scanning || piiHits.length === 0}
           onClick={applyAllPii}
         >
           Blur all{piiHits.length > 0 ? ` (${piiHits.length})` : ""}
         </button>
-        <button type="button" className="ss-tool ss-primary" title="Ctrl/Cmd+C" onClick={() => void onCopy()}>
+        <span className="ss-divider" aria-hidden />
+        <button type="button" className="ss-tool ss-primary" title="Ctrl+C" onClick={() => void onCopy()}>
           Copy
         </button>
-        <button type="button" className="ss-tool ss-primary" title="Ctrl/Cmd+S" onClick={() => void onSave()}>
+        <button type="button" className="ss-tool ss-primary" title="Ctrl+S" onClick={() => void onSave()}>
           Save
         </button>
         {onClose && (
-          <button type="button" className="ss-tool" title="Esc" onClick={onClose}>
+          <button type="button" className="ss-tool ss-ghost" title="Esc" onClick={onClose}>
             Close
           </button>
         )}
       </div>
-    </div>
+    </header>
   );
 }

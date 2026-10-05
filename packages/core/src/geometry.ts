@@ -33,7 +33,7 @@ export function sliceBBoxByChars(
 }
 
 /**
- * Tight, dynamic padding based on the text box height —
+ * Tight, dynamic padding based on the text box height  - 
  * small text gets small pad, large text gets proportionally more.
  */
 export function expandBlurRegion(

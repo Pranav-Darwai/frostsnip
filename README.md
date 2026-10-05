@@ -1,42 +1,41 @@
-# Frostsnip
+# frostSnip
 
 <p align="center">
-  <img src="branding/frostsnip-icon-512.png" alt="Frostsnip" width="128" height="128" />
+  <img src="branding/frostsnip-icon-512.png" alt="frostSnip" width="128" height="128" />
 </p>
 
 <p align="center">
-  <strong>Privacy-first snipping tool</strong><br/>
-  Capture → auto-find sensitive data → frost it before you share.
+  <strong>Privacy-first snipping</strong><br/>
+  Capture, find sensitive data on your PC, pixelate it, then share.
 </p>
 
-Lossless **PNG** capture with Snipping Tool–style UX. Emails, phones, cards, passbooks, invoices, and more are detected locally and frosted in-app. Nothing leaves your machine for OCR or redaction.
+## Install options
 
-## Apps
+| Method | Installs | Command / action |
+|--------|----------|------------------|
+| **Windows setup** | Desktop app | Run `frostSnip_*_x64-setup.exe` |
+| **npm** | Desktop app | `npm i -g frostsnip` then `frostsnip` |
+| **pip** | Desktop app | `pip install frostsnip` then `frostsnip` |
+| **Browser extension** | Chrome/Edge only | Load unpacked `apps/extension/dist` |
 
-| App | Role |
-|-----|------|
-| **Frostsnip Desktop** (Win/Mac) | Compact snip bar, hotkey capture, full editor |
-| **Frostsnip** (Chrome/Edge) | Annotate + Locate PII |
-| **Frostsnip Lite** | Capture + auto PII frost |
+Full steps and troubleshooting: **[INSTALL.md](./INSTALL.md)**
 
-## Install on Windows (native, offline)
+```bash
+# Desktop via npm
+npm install -g frostsnip
+frostsnip
 
-```powershell
-pnpm install
-pnpm install:win
+# Desktop via pip
+pip install frostsnip
+frostsnip
 ```
 
-Run the setup from `apps/desktop/src-tauri/target/release/bundle/nsis/`.
+> npm and pip install the **desktop app**, not the browser extension.
 
-Details: [INSTALL.md](./INSTALL.md)
+## Hotkeys (desktop)
 
-## Hotkeys
-
-- Windows: `Win+Shift+R` (falls back to `Ctrl+Shift+R`)
-- macOS: `Cmd+Shift+R`
-- Extension: `Ctrl/Cmd+Shift+R`
-
-Editor: `Ctrl/Cmd+Z` undo · `Ctrl/Cmd+C` copy · `Ctrl/Cmd+S` save
+- Screenshot: `Ctrl+Shift+F` (change in Settings)
+- Editor: `Ctrl+Z` undo, `Ctrl+C` copy, `Ctrl+S` save
 
 ## Develop
 
@@ -45,14 +44,18 @@ pnpm install
 pnpm test
 pnpm --filter @snapshort/desktop tauri:dev
 pnpm --filter @snapshort/extension build
-pnpm --filter @snapshort/extension-lite build
 ```
 
-Load unpacked extensions from `apps/extension/dist` or `apps/extension-lite/dist`.
+## Publish installers to registries
+
+1. Build desktop: `pnpm install:win`
+2. Upload `frostSnip_0.1.0_x64-setup.exe` to GitHub Releases
+3. Publish npm: `cd packages/npm-frostsnip && npm publish --access public`
+4. Publish PyPI: `cd packages/pypi-frostsnip && python -m build && twine upload dist/*`
 
 ## Brand
 
-Logo and icons live in [`branding/`](./branding/). Product name is **Frostsnip**.
+Assets in [`branding/`](./branding/). Product name: **frostSnip**.
 
 ## License
 

@@ -9,9 +9,10 @@ interface Frame {
 interface Props {
   frame: Frame;
   onDone: (region: { x: number; y: number; width: number; height: number } | null) => void;
+  onTakeFullscreen: () => void;
 }
 
-export function RegionOverlay({ frame, onDone }: Props) {
+export function RegionOverlay({ frame, onDone, onTakeFullscreen }: Props) {
   const [origin, setOrigin] = useState<{ x: number; y: number } | null>(null);
   const [curr, setCurr] = useState<{ x: number; y: number } | null>(null);
 
@@ -21,10 +22,11 @@ export function RegionOverlay({ frame, onDone }: Props) {
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") onDone(null);
+      if (e.key === "Enter" && !origin) onTakeFullscreen();
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [onDone]);
+  }, [onDone, onTakeFullscreen, origin]);
 
   const toImage = useCallback(
     (clientX: number, clientY: number) => ({
@@ -52,6 +54,8 @@ export function RegionOverlay({ frame, onDone }: Props) {
         backgroundSize: "100% 100%",
       }}
       onPointerDown={(e) => {
+        // Don't start a drag when clicking the floating options bar
+        if ((e.target as HTMLElement).closest(".ss-overlay-bar")) return;
         const p = toImage(e.clientX, e.clientY);
         setOrigin(p);
         setCurr(p);
@@ -62,7 +66,6 @@ export function RegionOverlay({ frame, onDone }: Props) {
       }}
       onPointerUp={() => {
         if (!origin || !curr) {
-          onDone(null);
           return;
         }
         const x = Math.min(origin.x, curr.x);
@@ -72,13 +75,38 @@ export function RegionOverlay({ frame, onDone }: Props) {
         setOrigin(null);
         setCurr(null);
         if (width < 4 || height < 4) {
-          onDone(null);
           return;
         }
         onDone({ x, y, width, height });
       }}
     >
-      <div className="ss-overlay-hint">Drag a region · Esc cancels · lossless PNG</div>
+      <div className="ss-overlay-bar" role="toolbar" aria-label="Capture options">
+        <span className="ss-overlay-brand">frostSnip</span>
+        <button type="button" className="ss-overlay-opt is-on">
+          Rectangle
+        </button>
+        <button
+          type="button"
+          className="ss-overlay-opt"
+          onClick={(e) => {
+            e.stopPropagation();
+            onTakeFullscreen();
+          }}
+        >
+          Full screen
+        </button>
+        <button
+          type="button"
+          className="ss-overlay-opt ss-overlay-cancel"
+          onClick={(e) => {
+            e.stopPropagation();
+            onDone(null);
+          }}
+        >
+          Cancel
+        </button>
+      </div>
+      <div className="ss-overlay-hint">Drag on the screen to select · Esc cancels</div>
       {sel && (
         <div
           className="ss-overlay-sel"

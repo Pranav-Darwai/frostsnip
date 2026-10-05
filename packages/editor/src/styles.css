@@ -1,19 +1,20 @@
 @import url("https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,500&family=Fraunces:opsz,wght@9..144,600;9..144,700&display=swap");
 
 :root {
-  --ss-bg: #f3f4f6;
+  --ss-bg: #e8edf3;
   --ss-surface: #ffffff;
-  --ss-panel: rgba(255, 255, 255, 0.92);
-  --ss-panel-border: rgba(15, 23, 42, 0.08);
+  --ss-panel: #ffffff;
+  --ss-panel-border: rgba(15, 23, 42, 0.1);
   --ss-text: #0f172a;
   --ss-muted: #64748b;
   --ss-accent: #0d9488;
   --ss-accent-strong: #0f766e;
-  --ss-accent-dim: rgba(13, 148, 136, 0.12);
+  --ss-accent-dim: rgba(13, 148, 136, 0.14);
   --ss-warn: #b45309;
+  --ss-warn-bg: rgba(251, 191, 36, 0.16);
   --ss-danger: #dc2626;
-  --ss-radius: 12px;
-  --ss-shadow: 0 10px 30px rgba(15, 23, 42, 0.08), 0 1px 2px rgba(15, 23, 42, 0.04);
+  --ss-radius: 14px;
+  --ss-shadow: 0 8px 28px rgba(15, 23, 42, 0.08), 0 1px 2px rgba(15, 23, 42, 0.04);
   --ss-font: "DM Sans", "Segoe UI", system-ui, sans-serif;
   --ss-display: "Fraunces", "Iowan Old Style", Georgia, serif;
 }
@@ -28,7 +29,9 @@
   display: flex;
   flex-direction: column;
   background:
-    linear-gradient(180deg, #f8fafc 0%, var(--ss-bg) 48%, #eef2f7 100%);
+    radial-gradient(900px 420px at 12% -10%, rgba(13, 148, 136, 0.12), transparent 55%),
+    radial-gradient(700px 380px at 92% 0%, rgba(15, 23, 42, 0.06), transparent 50%),
+    linear-gradient(180deg, #f4f7fb 0%, var(--ss-bg) 100%);
   color: var(--ss-text);
   font-family: var(--ss-font);
 }
@@ -37,13 +40,12 @@
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
   padding: 10px 14px;
-  margin: 14px 16px 0;
+  margin: 12px 14px 0;
   background: var(--ss-panel);
   border: 1px solid var(--ss-panel-border);
-  border-radius: 999px;
-  backdrop-filter: blur(20px) saturate(1.2);
+  border-radius: var(--ss-radius);
   box-shadow: var(--ss-shadow);
   animation: ss-rise 260ms cubic-bezier(0.22, 1, 0.36, 1) both;
 }
@@ -52,38 +54,50 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  margin-right: 6px;
-  padding-right: 10px;
+  margin-right: 4px;
+  padding-right: 12px;
   border-right: 1px solid var(--ss-panel-border);
 }
 
 .ss-brand-mark {
-  width: 28px;
-  height: 28px;
+  width: 30px;
+  height: 30px;
   display: grid;
   place-items: center;
-  border-radius: 8px;
-  background: linear-gradient(145deg, #14b8a6, #0f766e);
-  color: #f0fdfa;
+  border-radius: 9px;
+  background: linear-gradient(145deg, #2dd4bf, #0f766e);
+  color: #ecfdf5;
   font-family: var(--ss-display);
   font-weight: 700;
-  font-size: 14px;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25);
+  font-size: 16px;
+  line-height: 1;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.28);
 }
 
 .ss-brand-name {
   font-family: var(--ss-display);
   font-weight: 700;
   letter-spacing: -0.03em;
-  font-size: 15px;
+  font-size: 16px;
   color: var(--ss-text);
+}
+
+.ss-brand-name span {
+  color: var(--ss-accent-strong);
 }
 
 .ss-tool-group {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 4px;
+  gap: 3px;
+}
+
+.ss-divider {
+  width: 1px;
+  height: 22px;
+  margin: 0 4px;
+  background: var(--ss-panel-border);
 }
 
 .ss-tool {
@@ -93,7 +107,7 @@
   color: #334155;
   font: 600 12px/1 var(--ss-font);
   padding: 8px 11px;
-  border-radius: 999px;
+  border-radius: 9px;
   cursor: pointer;
   transition: background 140ms ease, color 140ms ease, border-color 140ms ease, box-shadow 140ms ease;
 }
@@ -104,15 +118,26 @@
 }
 
 .ss-tool.is-active {
-  border-color: rgba(13, 148, 136, 0.28);
+  border-color: rgba(13, 148, 136, 0.3);
   background: var(--ss-accent-dim);
   color: var(--ss-accent-strong);
-  box-shadow: inset 0 0 0 1px rgba(13, 148, 136, 0.08);
 }
 
-.ss-tool.ss-accent {
-  border-color: rgba(180, 83, 9, 0.22);
-  background: rgba(251, 191, 36, 0.14);
+.ss-tool.ss-ghost {
+  color: var(--ss-muted);
+}
+
+.ss-tool.ss-warn {
+  border-color: rgba(180, 83, 9, 0.28);
+  background: var(--ss-warn-bg);
+  color: var(--ss-warn);
+}
+
+.ss-tool.ss-warn.is-active {
+  box-shadow: inset 0 0 0 1px rgba(180, 83, 9, 0.2);
+}
+
+.ss-tool.ss-warn-soft {
   color: var(--ss-warn);
 }
 
@@ -128,13 +153,14 @@
 }
 
 .ss-tool:disabled {
-  opacity: 0.5;
-  cursor: wait;
+  opacity: 0.45;
+  cursor: not-allowed;
 }
 
 .ss-colors {
-  padding-left: 8px;
+  padding-left: 10px;
   border-left: 1px solid var(--ss-panel-border);
+  gap: 6px;
 }
 
 .ss-swatch {
@@ -149,7 +175,7 @@
 
 .ss-swatch.is-active {
   box-shadow: 0 0 0 2px var(--ss-accent);
-  transform: scale(1.08);
+  transform: scale(1.1);
 }
 
 .ss-stroke {
@@ -158,7 +184,7 @@
   gap: 6px;
   color: var(--ss-muted);
   font-size: 11px;
-  margin-left: 6px;
+  margin-left: 4px;
 }
 
 .ss-stroke input {
@@ -173,30 +199,46 @@
 .ss-workspace {
   flex: 1;
   display: flex;
-  gap: 14px;
-  padding: 14px 16px 16px;
+  gap: 12px;
+  padding: 12px 14px 14px;
   min-height: 0;
 }
 
 .ss-canvas-wrap {
+  position: relative;
   flex: 1;
-  display: grid;
-  place-items: center;
-  overflow: auto;
-  border-radius: 18px;
+  min-width: 0;
+  overflow: hidden;
+  border-radius: 16px;
   border: 1px solid var(--ss-panel-border);
   background:
-    linear-gradient(90deg, rgba(15, 23, 42, 0.035) 1px, transparent 1px) 0 0 / 18px 18px,
-    linear-gradient(rgba(15, 23, 42, 0.035) 1px, transparent 1px) 0 0 / 18px 18px,
-    #ffffff;
+    linear-gradient(90deg, rgba(15, 23, 42, 0.04) 1px, transparent 1px) 0 0 / 20px 20px,
+    linear-gradient(rgba(15, 23, 42, 0.04) 1px, transparent 1px) 0 0 / 20px 20px,
+    #fbfcfe;
   box-shadow: var(--ss-shadow);
   animation: ss-fade 320ms ease both;
 }
 
 .ss-stage {
-  box-shadow: 0 16px 40px rgba(15, 23, 42, 0.12);
-  border-radius: 2px;
-  overflow: hidden;
+  display: block;
+}
+
+.ss-canvas-hint {
+  position: absolute;
+  left: 50%;
+  bottom: 14px;
+  transform: translateX(-50%);
+  margin: 0;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: rgba(15, 23, 42, 0.78);
+  color: #f8fafc;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  pointer-events: none;
+  white-space: nowrap;
+  animation: ss-fade 280ms ease both;
 }
 
 .ss-empty {
@@ -208,11 +250,11 @@
 }
 
 .ss-pii-rail {
-  width: 268px;
+  width: 260px;
   flex-shrink: 0;
   background: var(--ss-surface);
   border: 1px solid var(--ss-panel-border);
-  border-radius: 18px;
+  border-radius: 16px;
   padding: 14px;
   box-shadow: var(--ss-shadow);
   animation: ss-slide 300ms cubic-bezier(0.22, 1, 0.36, 1) both;
@@ -327,9 +369,6 @@
 }
 
 @media (max-width: 900px) {
-  .ss-toolbar {
-    border-radius: 16px;
-  }
   .ss-workspace {
     flex-direction: column;
   }

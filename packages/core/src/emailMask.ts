@@ -50,7 +50,7 @@ export function planEmailMask(email: string): EmailMaskPlan {
 
   const blurCharRanges: Array<{ start: number; end: number }> = [];
 
-  // Blur middle of local-part only — never frost @ or domain
+  // Blur middle of local-part only - never frost @ or domain
   if (localKeep < local.length) {
     blurCharRanges.push({ start: localKeep, end: at });
   }

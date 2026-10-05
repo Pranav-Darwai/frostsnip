@@ -1,8 +1,8 @@
 {
-  "name": "frostsnip",
+  "name": "frostsnip-workspace",
   "private": true,
   "version": "0.1.0",
-  "description": "Frostsnip — privacy-first snipping tool with automatic PII frost",
+  "description": "frostSnip - privacy-first snipping tool with automatic PII frost",
   "scripts": {
     "dev:desktop": "pnpm --filter @snapshort/desktop tauri:dev",
     "dev:extension": "pnpm --filter @snapshort/extension dev",

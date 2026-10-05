@@ -1,0 +1,36 @@
+{
+  "name": "frostsnip",
+  "version": "0.1.0",
+  "description": "Install and launch frostSnip (privacy-first snipping tool)",
+  "type": "module",
+  "bin": {
+    "frostsnip": "./bin/frostsnip.js"
+  },
+  "files": [
+    "bin",
+    "lib",
+    "README.md"
+  ],
+  "scripts": {
+    "typecheck": "node --check ./bin/frostsnip.js && node --check ./lib/install.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "keywords": [
+    "frostsnip",
+    "screenshot",
+    "snipping",
+    "pii",
+    "privacy"
+  ],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Pranav-Darwai/frostsnip"
+  },
+  "homepage": "https://github.com/Pranav-Darwai/frostsnip#readme",
+  "bugs": {
+    "url": "https://github.com/Pranav-Darwai/frostsnip/issues"
+  }
+}

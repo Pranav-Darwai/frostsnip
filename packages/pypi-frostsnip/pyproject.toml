@@ -1,0 +1,31 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "frostsnip"
+version = "0.1.0"
+description = "Install and launch frostSnip (privacy-first snipping tool)"
+readme = "README.md"
+requires-python = ">=3.9"
+license = { text = "MIT" }
+authors = [{ name = "frostSnip" }]
+keywords = ["frostsnip", "screenshot", "snipping", "pii", "privacy"]
+classifiers = [
+  "Programming Language :: Python :: 3",
+  "License :: OSI Approved :: MIT License",
+  "Operating System :: OS Independent",
+  "Topic :: Utilities",
+]
+dependencies = []
+
+[project.urls]
+Homepage = "https://github.com/Pranav-Darwai/frostsnip"
+Repository = "https://github.com/Pranav-Darwai/frostsnip"
+Issues = "https://github.com/Pranav-Darwai/frostsnip/issues"
+
+[project.scripts]
+frostsnip = "frostsnip.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]

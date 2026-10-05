@@ -12,6 +12,7 @@ export interface SnapshortEditorProps {
   mode?: "full" | "lite";
   onClose?: () => void;
   autoLocate?: boolean;
+  onSaveFile?: (dataUrl: string, filename: string) => Promise<void>;
 }
 
 export function SnapshortEditor({
@@ -21,6 +22,7 @@ export function SnapshortEditor({
   mode = "full",
   onClose,
   autoLocate = false,
+  onSaveFile,
 }: SnapshortEditorProps) {
   const setImage = useEditorStore((s) => s.setImage);
   const current = useEditorStore((s) => s.imageDataUrl);
@@ -69,7 +71,7 @@ export function SnapshortEditor({
 
   return (
     <div className={`ss-editor ss-mode-${mode}`}>
-      <EditorToolbar mode={mode} onClose={onClose} />
+      <EditorToolbar mode={mode} onClose={onClose} onSaveFile={onSaveFile} />
       <div className="ss-workspace">
         <EditorCanvas />
         <PiiChipRail />
@@ -87,7 +89,7 @@ function PiiChipRail() {
     <aside className="ss-pii-rail" aria-label="Detected PII">
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 8, marginBottom: 10 }}>
         <h3 style={{ margin: 0 }}>Detected PII</h3>
-        <button type="button" className="ss-tool ss-accent" onClick={applyAllPii}>
+        <button type="button" className="ss-tool ss-warn" onClick={applyAllPii}>
           Blur all
         </button>
       </div>

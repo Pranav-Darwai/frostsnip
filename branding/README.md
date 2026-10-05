@@ -1,14 +1,14 @@
-# Frostsnip brand
+# frostSnip brand
 
-Product name: **Frostsnip**  
-Tagline: Privacy-first snipping  
+Product name: **frostSnip**  
+Tagline: Privacy-first snipping
 
 | File | Use |
 |------|-----|
-| `frostsnip-icon-master.jpg` | Source artwork |
-| `frostsnip-icon-1024.png` | Master square PNG |
+| `frostsnip-mark.svg` | Master vector mark (source of truth) |
+| `frostsnip-icon-1024.png` | Raster master |
 | `frostsnip-icon-512.png` | README / marketing |
-| `app-icon.png` | Bundled Tauri tray/app PNG |
+| `app-icon.png` | App / tray PNG |
 | `frostsnip.ico` | Windows installer / shortcut |
 
-Colors: teal `#0F766E` → cyan `#14B8A6`, frost white overlays.
+Mark: teal plate + crop corners + frost bar. No spheres, no wordmarks in the icon.
