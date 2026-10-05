@@ -27,6 +27,7 @@ AGENTS.md
 CLAUDE.md
 *.canvas.tsx
 packages/pypi-frostsnip/dist/
-packages/pypi-frostsnip/*.egg-info/
+packages/pypi-frostsnip/**/*.egg-info/
+packages/pypi-frostsnip/build/
 __pycache__/
 *.pyc
