@@ -1,0 +1,70 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "productName": "Frostsnip",
+  "version": "0.1.0",
+  "identifier": "com.frostsnip.desktop",
+  "build": {
+    "beforeDevCommand": "pnpm dev",
+    "devUrl": "http://localhost:1420",
+    "beforeBuildCommand": "pnpm build",
+    "frontendDist": "../dist"
+  },
+  "app": {
+    "windows": [
+      {
+        "title": "Frostsnip",
+        "width": 540,
+        "height": 210,
+        "minWidth": 500,
+        "minHeight": 180,
+        "resizable": false,
+        "maximizable": false,
+        "fullscreen": false,
+        "decorations": true,
+        "transparent": false,
+        "center": true,
+        "alwaysOnTop": false,
+        "visible": true
+      }
+    ],
+    "security": {
+      "csp": null
+    },
+    "trayIcon": {
+      "iconPath": "icons/icon.png",
+      "iconAsTemplate": true
+    }
+  },
+  "bundle": {
+    "active": true,
+    "targets": ["nsis", "msi"],
+    "category": "Utility",
+    "shortDescription": "Privacy-first snipping tool with automatic PII frost",
+    "longDescription": "Frostsnip is a Snipping Tool–style capture app that finds and frosts emails, phones, cards, passbooks, invoices, and other sensitive data before you share a screenshot.",
+    "publisher": "Frostsnip",
+    "copyright": "Copyright © Frostsnip",
+    "icon": [
+      "icons/32x32.png",
+      "icons/128x128.png",
+      "icons/henry.w@example.net",
+      "icons/icon.png",
+      "icons/icon.ico"
+    ],
+    "windows": {
+      "webviewInstallMode": {
+        "type": "downloadBootstrapper",
+        "silent": true
+      },
+      "nsis": {
+        "installMode": "currentUser",
+        "displayLanguageSelector": false,
+        "installerIcon": "icons/icon.ico",
+        "compression": "lzma"
+      },
+      "wix": {
+        "language": "en-US"
+      }
+    }
+  },
+  "plugins": {}
+}

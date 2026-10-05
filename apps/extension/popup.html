@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Frostsnip</title>
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=DM+Sans:wght@500;600;700&family=Fraunces:opsz,wght@9..144,700&display=swap");
+      :root {
+        color-scheme: light;
+      }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        width: 300px;
+        font-family: "DM Sans", "Segoe UI", system-ui, sans-serif;
+        background: #f3f4f6;
+        color: #0f172a;
+      }
+      .shell {
+        margin: 10px;
+        padding: 14px;
+        border-radius: 18px;
+        background: #fff;
+        border: 1px solid rgba(15, 23, 42, 0.08);
+        box-shadow: 0 12px 28px rgba(15, 23, 42, 0.08);
+      }
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 12px;
+      }
+      .mark {
+        width: 32px;
+        height: 32px;
+        border-radius: 10px;
+        display: grid;
+        place-items: center;
+        background: linear-gradient(145deg, #14b8a6, #0f766e);
+        color: #f0fdfa;
+        font-family: "Fraunces", Georgia, serif;
+        font-weight: 700;
+        font-size: 15px;
+      }
+      .title {
+        font-family: "Fraunces", Georgia, serif;
+        font-size: 17px;
+        font-weight: 700;
+        letter-spacing: -0.03em;
+        line-height: 1.1;
+      }
+      .sub {
+        margin: 2px 0 0;
+        font-size: 11px;
+        color: #64748b;
+        font-weight: 500;
+      }
+      .actions {
+        display: grid;
+        gap: 8px;
+      }
+      button {
+        appearance: none;
+        width: 100%;
+        border: 0;
+        border-radius: 12px;
+        padding: 12px 14px;
+        font: 700 13px/1 "DM Sans", "Segoe UI", sans-serif;
+        cursor: pointer;
+        transition: transform 120ms ease, background 120ms ease;
+      }
+      button:active { transform: scale(0.98); }
+      #capture {
+        background: #0d9488;
+        color: #f0fdfa;
+      }
+      #capture:hover { background: #0f766e; }
+      .hint {
+        margin: 10px 2px 0;
+        font-size: 11px;
+        color: #64748b;
+        display: flex;
+        justify-content: space-between;
+        gap: 8px;
+      }
+      kbd {
+        font: 600 10px/1 ui-monospace, Consolas, monospace;
+        padding: 3px 6px;
+        border-radius: 6px;
+        background: #f1f5f9;
+        border: 1px solid rgba(15, 23, 42, 0.08);
+        color: #334155;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="shell">
+      <div class="brand">
+        <div class="mark">F</div>
+        <div>
+          <div class="title">Frostsnip</div>
+          <p class="sub">Clean capture · private frost</p>
+        </div>
+      </div>
+      <div class="actions">
+        <button id="capture" type="button">New snip</button>
+      </div>
+      <div class="hint">
+        <span>High-quality PNG</span>
+        <kbd>Ctrl+Shift+R</kbd>
+      </div>
+    </div>
+    <script type="module" src="/src/popup.ts"></script>
+  </body>
+</html>

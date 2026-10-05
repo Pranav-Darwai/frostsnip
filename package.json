@@ -1,0 +1,20 @@
+{
+  "name": "frostsnip",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Frostsnip — privacy-first snipping tool with automatic PII frost",
+  "scripts": {
+    "dev:desktop": "pnpm --filter @snapshort/desktop tauri:dev",
+    "dev:extension": "pnpm --filter @snapshort/extension dev",
+    "dev:lite": "pnpm --filter @snapshort/extension-lite dev",
+    "build": "pnpm -r --filter=./packages/* build && pnpm -r --filter=./apps/* build",
+    "build:core": "pnpm --filter @snapshort/core build",
+    "install:win": "pnpm --filter @snapshort/desktop tauri:build",
+    "test": "pnpm --filter @snapshort/core test",
+    "typecheck": "pnpm -r typecheck"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "packageManager": "pnpm@9.15.0"
+}
